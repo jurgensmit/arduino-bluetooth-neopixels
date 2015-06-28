@@ -1,6 +1,14 @@
 /*
  * Arduino Bluetooth Neopixels - Control the color of the NeoPixels connected to the arduino with a phone
  *
+ * Connect a Bluetooth low energy breakout board to an Arduino and some NeoPixels. Download the iOS app
+ * and control the color of the NeoPixels with an iPhone or iPad :) Either use the color picker module to pick
+ * a color or stream the Quaternion sensor data which sets the color based on the pitch, yawn and roll 
+ * rotation of the device. A potentiometer directly connected to the Arduino is used to control the 
+ * brightness of the NeoPixels.
+ *
+ * (c) 2015 Jurgen Smit. All rights reserved.
+ *
  * Circuit: 
  *
  * - nRF8001 Bluefruit LE Breakout connected to the SPI interface of the Arduino + Pin 2 for interupts
@@ -12,6 +20,7 @@
  *
  * - Adafruit NeoPixel Library: https://github.com/adafruit/Adafruit_NeoPixel
  * - Adafruit nRF8001 Bluetooth Low Energy Breakout Library: https://github.com/adafruit/Adafruit_nRF8001
+ * - Adafruit Bluefruit LE Connect iOS App: https://itunes.apple.com/us/app/adafruit-bluefruit-le-connect/id830125974?mt=8
  *
  */
 
@@ -73,11 +82,25 @@ byte getBrightness() {
  * Set the color and brightness of the NeoPixels
  */
 void setNeoPixelColor(byte red, byte green, byte blue, byte brightness) {
+
+  Serial.println("Color: (R:" + String(red) + ", G:" + String(green) + ", B:" + String(blue) + ", I:" + String(brightness) + ")");
+  
+  // Calculate the final rgb values based on the given colors and brightness
   uint32_t color = NeoPixels.Color((red * brightness) >> 8, (green * brightness) >> 8, (blue * brightness) >> 8);
+  
+  // Set the color of the neopixels
   for(int i = 0; i < NEOPIXEL_AMOUNT; i++){
     NeoPixels.setPixelColor(i, color);
   }
   NeoPixels.show();
+  
+  // Remember the current (raw) values 
+  lastRed = red;
+  lastGreen = green;
+  lastBlue = blue;
+  lastBrightness = brightness;
+  
+  // Set the brightness of the status led inverse to the brightness of the neopixels
   analogWrite(STATUSLED_PIN, 255 - brightness);
 }
 
@@ -114,12 +137,34 @@ aci_evt_opcode_t getBLEState() {
  * Process the color command
  */
 void processColorCommand(byte *command) {
-  lastRed = command[2];
-  lastGreen = command[3];
-  lastBlue = command[4];
+  // Get the parameters of the command
+  byte red = command[2];
+  byte green = command[3];
+  byte blue = command[4];
   
-  Serial.println("Color: (" + String(lastRed) + ", " + String(lastGreen) + ", " + String(lastBlue) + ")");
-  setNeoPixelColor(lastRed, lastGreen, lastBlue, lastBrightness);
+  // Set the color of the nexpixels
+  setNeoPixelColor(red, green, blue, lastBrightness);
+}
+
+/*
+ * Process the quaternion command
+ */
+void processQuaternionCommand(byte *command) {
+  // Get the parameters of the command, all parameters are floats ranging -1.0 ... +1.0
+  float x = *(float *)&command[2];
+  float y = *(float *)&command[6];
+  float z = *(float *)&command[10];
+  float w = *(float *)&command[14];
+
+  Serial.println("xyzw: (" + String(x) + ", " + String(y) + ", " + String(z) + ", " + String(w) + ")");
+  
+  // Calculate the color based on the position of the phone
+  byte red = abs(x) * 255;
+  byte green = abs(y) * 255;
+  byte blue = abs(z) * 255;
+  
+  // Set the color of the nexpixels
+  setNeoPixelColor(red, green, blue, lastBrightness);
 }
 
 /*
@@ -129,6 +174,11 @@ void processCommand(byte *command, byte commandLength) {
   if(commandLength == 6) {
     if(command[0] == '!' && command[1] == 'C') {
       processColorCommand(command);
+    }
+  }
+  else if(commandLength == 19) {
+    if(command[0] == '!' && command[1] == 'Q') {
+      processQuaternionCommand(command);
     }
   }
 }
