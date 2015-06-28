@@ -19,11 +19,12 @@ brightness of the NeoPixels.
 
 ## What you need
 
-1. Arduino
-2. Adafruit nRF8001 Bluefruit LE Breakout Board
+1. Arduino Uno
+2. Adafruit nRF8001 Bluefruit LE Breakout Board (https://www.adafruit.com/products/1697)
 3. Some NeoPixels
-4. A 470 ohm resistor
-5. A 10 kOhm potentiometer
+4. Adafruit Bluefruit LE Connect iOS App (https://itunes.apple.com/us/app/adafruit-bluefruit-le-connect/id830125974?mt=8)
+5. A 470 ohm resistor
+6. A 10 kOhm potentiometer
 
 Optionally
 
