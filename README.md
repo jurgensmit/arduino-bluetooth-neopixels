@@ -29,4 +29,6 @@ Optionally
 
 5. Led + 1 kOhm Resistor as status led to show the project is active
 
+## Result
+
 ![iOS App](https://github.com/jurgensmit/arduino-bluetooth-neopixels/blob/master/images/iOSApp.png "Arduino Bluetooth NeoPixels") ![Project Photo](https://github.com/jurgensmit/arduino-bluetooth-neopixels/blob/master/images/Photo.jpg "Arduino Bluetooth NeoPixels")
