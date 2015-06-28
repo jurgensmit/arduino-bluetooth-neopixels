@@ -7,7 +7,7 @@ a color or stream the Quaternion sensor data which sets the color based on the p
 rotation of the device. A potentiometer directly connected to the Arduino is used to control the 
 brightness of the NeoPixels.
 
-![Fritzing Sketch](https://github.com/jurgensmit/arduino-bluetooth-neopixels/blob/master/arduino-bluetooth-neopixels.png "Arduino Bluetooth NeoPixels")
+![Fritzing Sketch](https://github.com/jurgensmit/arduino-bluetooth-neopixels/blob/master/images/arduino-bluetooth-neopixels.png "Arduino Bluetooth NeoPixels")
 
 ## Do it yourself
 
@@ -29,4 +29,4 @@ Optionally
 
 5. Led + 1 kOhm Resistor as status led to show the project is active
 
-
+![iOS App](https://github.com/jurgensmit/arduino-bluetooth-neopixels/blob/master/images/iOSApp.png "Arduino Bluetooth NeoPixels") ![Project Photo](https://github.com/jurgensmit/arduino-bluetooth-neopixels/blob/master/images/Photo.jpg "Arduino Bluetooth NeoPixels")
